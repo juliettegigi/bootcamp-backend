@@ -20,8 +20,9 @@ router.post('/',
                 check('nombre','El nombre es obligatorio').notEmpty(),
                 check('pass','La contraseña es obligatoria').notEmpty(),
                 check('pass','La contraseña debe tener al menos 6 caracteres').isLength({ min: 6 }),
+                validarCampos,
                 isUsuarioRegistrado,
-                validarCampos], 
+            ], 
             crearUser); 
 router.put('/:id',[isAuth],actualizarUser); // http://localhost:3000/users/8
 router.delete('/:id',[isAuth],eliminarUser)// http://localhost:3000/users/8

@@ -1,5 +1,15 @@
 const {pool,tablas}=require("../db_config");
+const { getById } = require("./consultasGenerales");
 const{eventos}=tablas;
+
+
+
+
+
+const getEventoById=async(id)=>{
+  return getById(id,eventos)
+ }
+
 
 
 /**
@@ -68,7 +78,7 @@ const crearEvento=async(nombre,fecha,ubicacion,descripcion)=>{
 
 
 const borrarEventoLogico=async(id)=>{
-    try {console.log("entrodddddddddddddddddddddddddddddddddddd  ",id)
+    try {
        const[result]= await pool.query(`UPDATE ??
                                         SET isEliminado=1
                                         WHERE id=?;`,
@@ -98,22 +108,7 @@ const editarEvento=async(id,nombre,fecha,ubicacion,descripcion)=>{
     }
 }
 
-const getEventoById=async(id)=>{
-    try{
-        const [result]=await pool.query(`SELECT *
-                                     FROM ??
-                                     WHERE id=? and isEliminado=0`,
-                                     [eventos,id])
-        console.log(`--------------------- result de get evento by id`)
-        console.log(result)                             
-        if(result.length>0)                                 
-          return result[0]
-        return result
-    }catch(error){
-         console.log(error);
-         throw(error)
-    }
-}
+
 
 
 const getEventoByIdOrName = async (idOrName,limit=1,offset=0) => {

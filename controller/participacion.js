@@ -87,28 +87,93 @@ const isConfirmado=async(req,res)=>{
 
 
 
-const generarPDF=(req,res)=>{
+
+const eliminarParticipacion=async(req,res)=>{
+    try {
+        const {id}=req.params;
+        if(await Participacion.eliminarParticipacion(id)>0)
+           return res.json("Participación eliminada")
+        else return res.status(400).json("Usuario not found.")        
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json(error.message)
+    }
+
+
+}
+
+
+
+const getParticipacionById=async(req,res)=>{
+    try {
+        const{id}= req.params;
+        const{participacion}=await Participacion.getParticipacionById(id)
+        if(participacion.length === 0)
+            return res.status(400).json({msg:"Participacion not found"})
+        return res.json(participacion)        
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json(error.message)
+    }
+
+}
+
+
+
+
+
+const generarPDF=async(req,res)=>{
  
+   
+
   console.log(__dirname)
   console.log(path.join(__dirname,'/fonts/Roboto-Regular.ttf'))
-  try  {  var fonts = {
+  try  { 
+    
+    const evento=await Evento.getEventoById(req.params.eventoId)
+    const today = new Date();
+    const formattedDate = today.toLocaleDateString('es-ES', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric',
+    });
+    var fonts = {
         Roboto: {
             normal:path.join(__dirname,'/fonts/Roboto-Regular.ttf'),
             bold:path.join(__dirname, 'fonts/Roboto-Medium.ttf'),
             italics:path.join(__dirname, 'fonts/Roboto-Italic.ttf'),
             bolditalics: path.join(__dirname,'fonts/Roboto-MediumItalic.ttf')
-        }
+        },
+
     };
     
     let pdfMake=new PdfMake(fonts);
     
-    var docDefinition = {
-        content: [
-            'First paragraph',
-            'Another paragraph, this time a little bit longer to make sure, this line will be divided into at least two lines'
-        ]
-    };
-    
+   
+const docDefinition = {
+    content: [
+      { text: 'CERTIFICADO DE PARTICIPACIÓN', style: 'header', alignment: 'center', margin: [0, 40, 0, 20] },
+      { text: evento.nombre, style: 'subheader', alignment: 'center', margin: [0, 0, 0, 10] },
+      {
+        text: `Se otorga el presente certificado a: ${req.session.usuario.nombre}, por su participación en el evento realizado el día ${new Date(evento.fecha).toLocaleDateString('es-ES')} en ${evento.ubicacion}.`,
+        margin: [0, 10, 0, 20],
+      },
+      {
+        text: `Emitido el día: ${formattedDate}`,
+        style: 'footer',
+        alignment: 'right',
+        margin: [0, 30, 0, 0],
+      },
+    ],
+    styles: {
+      header: { fontSize: 18, bold: true },
+      subheader: { fontSize: 14, bold: true },
+      footer: { fontSize: 10, italic: true },
+    }, 
+    defaultStyle: {
+        font: 'Roboto', 
+      },
+  };
     var pdfDoc = pdfMake.createPdfKitDocument(docDefinition,{});
    // pdfDoc.pipe(fs.createWriteStream(__dirname+'/basics.pdf'));
    res.setHeader('Content-Disposition', 'attachment; filename="basics.pdf"');
@@ -127,9 +192,11 @@ const generarPDF=(req,res)=>{
 
 
 module.exports={
+    getParticipacionById,
     setPresenteToggle,
     setConfirmadoToggle,
     createParticipacion,
+    eliminarParticipacion,
     isRegistrado,
     isConfirmado,
     generarPDF

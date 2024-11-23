@@ -1,5 +1,6 @@
 //Ejercicio 4: En un archivo crud_example.js, escribe funciones asíncronas para crear, leer, actualizar y eliminar registros en la tabla users.
 const {pool,tablas}=require("../db_config");
+const { getById } = require("./consultasGenerales");
 const{usuarios,participaciones,eventos}=tablas;
 
 
@@ -23,26 +24,10 @@ const crearUser=async(nombre,email,pass)=>{
         throw error;
     }
 }
-/**
- * 
- * @param {number} id 
- * @returns {Promise<Object|Error>} return un usuario
- */
+
+
 const leerUserById=async(id)=>{
-    try{
-        const [result]=await pool.query(`SELECT *
-                                     FROM ??
-                                     WHERE id=?`,
-                                     [usuarios,id])
-        console.log(`--------------------- result de SELECT * FROM usuarios WHERE id=${id}`)
-        console.log(result)                             
-        if(result.length>0)                                 
-          return result[0]
-        return result
-    }catch(error){
-         console.log(error);
-         throw(error)
-    }
+    return getById(id,usuarios);
 }
 /**
  * 

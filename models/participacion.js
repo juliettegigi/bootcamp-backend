@@ -1,6 +1,7 @@
 
 
 const {pool,tablas}=require("../db_config");
+const { eliminarById, getById,is } = require("./consultasGenerales");
 const{participaciones}=tablas;
 
 const setPresenteToggle=async(usuarioId,eventoId)=>{
@@ -9,6 +10,19 @@ const setPresenteToggle=async(usuarioId,eventoId)=>{
                                          SET isPresente = isPresente ^ 1 
                                          WHERE usuarioId=? AND eventoId=?`,
                                          [participaciones,usuarioId,eventoId]);
+        return result.affectedRows;  
+    }catch(error){
+        console.log(error)
+        throw error
+    }
+}
+
+const setConfirmadoToggle=async(participacionId)=>{
+    try{
+        const [result]=await pool.query(`UPDATE ??
+                                         SET isConfirmado = isConfirmado ^ 1 
+                                         WHERE id=?`,
+                                         [participaciones,participacionId]);
         return result.affectedRows;  
     }catch(error){
         console.log(error)
@@ -30,65 +44,45 @@ const createParticipacion=async(usuarioId,eventoId)=>{
 }
 
 
-const isRegistrado=async(usuarioId,eventoId)=>{
-    try {
-        const [resultado] = await pool.query(`
-                                              SELECT id
-                                              FROM ?? 
-                                              WHERE usuarioId=? AND eventoId=?
-                                            ;`, 
-                                            [participaciones,parseInt(usuarioId),parseInt(eventoId)]
-                                        );
-        console.log(resultado)
-       
-          return (resultado.length===0)?0:resultado[0].id;
-    } catch (error) {
-        console.log(error);
-        throw error;
-    }
-}
+
+
+
 
 
 const isConfirmado=async(participacionId)=>{
-    try {
-        const [resultado] = await pool.query(`
-                                              SELECT id
-                                              FROM ?? 
-                                              WHERE id=? AND isConfirmado=1
-                                
-                                            ;`, 
-                                            [participaciones,parseInt(participacionId)]
-                                        );
-        console.log(resultado)
-       
-          return (resultado.length===0)?0:resultado[0].id;
-    } catch (error) {
-        console.log(error);
-        throw error;
-    }
+ return is(' WHERE id=? AND isConfirmado=1',
+    [participaciones,parseInt(participacionId)]);
+}
+
+const isPresente=async(participacionId)=>{
+    return is(' WHERE id=? AND isPresente=1',
+        [participaciones,parseInt(participacionId)]);
+}
+const isRegistrado=async(usuarioId,eventoId)=>{
+ return is(' WHERE usuarioId=? AND eventoId=?',
+    [participaciones,parseInt(usuarioId),parseInt(eventoId)])
 }
 
 
 
-const setConfirmadoToggle=async(participacionId)=>{
-    try{
-        const [result]=await pool.query(`UPDATE ??
-                                         SET isConfirmado = isConfirmado ^ 1 
-                                         WHERE id=?`,
-                                         [participaciones,participacionId]);
-        return result.affectedRows;  
-    }catch(error){
-        console.log(error)
-        throw error
-    }
+
+
+const eliminarParticipacion=async(id)=>{
+  return eliminarById(id,participaciones)
 }
 
+getParticipacionById=async(id)=>{
+   return getById(id,participaciones)
+}
 
 
 module.exports={
     createParticipacion,
+    isConfirmado,
     isRegistrado,
+    isPresente,
     setPresenteToggle,
     setConfirmadoToggle,
-    isConfirmado
+    eliminarParticipacion,
+    getParticipacionById
 }

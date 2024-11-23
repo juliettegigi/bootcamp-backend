@@ -1,6 +1,5 @@
 const express=require("express");
 const cors=require('cors');
-var cookieParser = require('cookie-parser');
 const session = require('express-session');
 const { isAuth } = require("./middlewares/validaciones");
 //instancia de express
@@ -9,23 +8,23 @@ const PORT=3000;
 
 
 //MIDDLEWARES
-/* app.use(
-    session({
-      secret: 'PrrTutuPrrTutu',
-      resave: false,
-      saveUninitialized: false,
-    })
-  );
- */
-  app.use(cors({ 
+  
+app.use(cors({ 
     origin: 'http://localhost:4200',
     credentials: true
    }));
- // app.use(cookieParser());
+
   app.use(session({
     secret: 'PrrTutuPrrTutu',
     resave: false,
-    saveUninitialized:true,
+    saveUninitialized:false,
+    cookie:{
+      secure:false,// true es para https
+      httpOnly:true,  //evita el acceso de JS, la cookie solo puede ser enviada y utilizada por el servidor
+     // si es false==> en el navegador se va a poder acceder a las cookies
+      //maxAge:6000
+      maxAge: 3600000
+    }
     }));
 
 
@@ -37,7 +36,9 @@ app.use("/eventos"
   ,[isAuth] 
   ,require('./routes/evento'))
 app.use("/auth",require('./routes/auth'))
-app.use("/participaciones",[isAuth],require('./routes/participacion'))
+app.use("/participaciones",
+        [isAuth],
+        require('./routes/participacion'))
 app.use("/roles",require('./routes/rol'))
 
 
@@ -46,3 +47,4 @@ app.use("/roles",require('./routes/rol'))
 app.listen(PORT,()=>{
     console.log(`http://localhost:${PORT}/`)
 })
+

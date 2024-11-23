@@ -13,13 +13,13 @@ router.get('/idNombre/:idNom',getEventoByIdOrName);
 router.get('/usuarioPresente/:usuarioId',getEventosByUsuarioIsPresente);
 router.get('/:id',getEventoById);
 router.post('/',[
-            tieneRole(['ORGANIZADOR'])
+            tieneRole('ORGANIZADOR')
             ], crearEvento ); 
 router.put('/:id',[
-            tieneRole(['ORGANIZADOR'])
+            tieneRole('ORGANIZADOR')
             ],editarEvento); 
 router.put('/borrar/:id',[
-            tieneRole(['ORGANIZADOR'])
+            tieneRole('ORGANIZADOR')
             ],borrarEventoLogico); 
 
 module.exports=router;
