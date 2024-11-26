@@ -74,13 +74,14 @@ const isUserEventoEnParticipacion=async(req,res,next)=>{
 
 const isParticipacionDelUsuario=async(req,res,next)=>{
   try{
-    const {id}=req.params 
-    const participacion=await Participacion.getParticipacionById(id);
+    const {participacionId}=req.params 
+    const participacion=await Participacion.getParticipacionById(parseInt(participacionId));
     if(participacion.length===0){
-        return res.status(400).json('participación not foud')
+      console.log("entrooooooooooo")
+        return res.status(400).json('participación not found')
     }
-    if(participacion.usuarioId!==req.session.usuario.id){
-      return res.status(400).json('no se puede eliminar la participación de otro usuario')
+    if(participacion[0].usuarioId!==req.session.usuario.id){
+      return res.status(400).json('no se puede operar sobre la participación de otro usuario')
     }
     next();
   }catch(error){

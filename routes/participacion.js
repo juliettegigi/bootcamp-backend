@@ -17,6 +17,7 @@ router.put('/setPresenteToggle/:usuarioId/:eventoId',[
 router.put('/setConfirmadoToggle/:participacionId',[
             check('participacionId').isInt().withMessage('participacionId debe ser un número entero'),
             validarCampos,
+            isParticipacionDelUsuario,
             ],setConfirmadoToggle)
 router.get('/isRegistrado/:usuarioId/:eventoId',[
             check('eventoId').isInt().withMessage('El eventoId debe ser un número entero'),
@@ -32,8 +33,8 @@ router.get('/pdf/:eventoId',[
             validarCampos,
             isUserEventoEnParticipacion,
             ],generarPDF)
-router.delete('/:id',[
-               check('id').isInt().withMessage('El id debe ser un número entero'),
+router.delete('/:participacionId',[
+               check('participacionId').isInt().withMessage('El id debe ser un número entero'),
                validarCampos,
                isParticipacionDelUsuario,
                noPresente

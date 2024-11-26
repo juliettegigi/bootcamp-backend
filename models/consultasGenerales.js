@@ -17,13 +17,13 @@ const eliminarById=async(id,tabla)=>{
 
 const getById=async(id,tabla)=>{
     try{
+        
         const [result]=await pool.query(`SELECT *
                                      FROM ??
-                                     WHERE id=?`,
-                                     [tabla,id])                         
-        if(result.length>0)                                 
-          return result[0]  //un registro
-        return result  //arreglo vacio
+                                     WHERE id=?;`,
+                                     [tabla,id])                       
+        
+        return result  //un arreglo
     }catch(error){
          console.log(error);
          throw(error)

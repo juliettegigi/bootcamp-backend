@@ -210,7 +210,7 @@ const getUsuariosPorEvento=async(eventoId,limit=5, offset=0)=>{
 }
 
 
-
+// busca por id, nombre del user y evento
 const getUsuariosPorEvento2=async(idOrName,eventoId,limit=5, offset=0)=>{
     try{
         
@@ -227,9 +227,9 @@ const getUsuariosPorEvento2=async(idOrName,eventoId,limit=5, offset=0)=>{
                                         WHERE 
                                             e.isEliminado=0
                                             AND e.id = ?
-                                            AND ( u.id=?  OR  u.nombre LIKE ?) 
+                                            AND ( u.id=?  OR  u.nombre LIKE ? OR u.email LIKE ?) 
                                         LIMIT ? OFFSET ?;`,  
-                                            [participaciones,usuarios,eventos,eventoId,idOrName,`%${idOrName}%`,limit,offset])
+                                            [participaciones,usuarios,eventos,eventoId,idOrName,`%${idOrName}%`,`%${idOrName}%`,limit,offset])
         const [[{ total }]] =await pool.query(`SELECT COUNT(*) as total  
                                         FROM ?? p
                                         JOIN 
@@ -239,9 +239,9 @@ const getUsuariosPorEvento2=async(idOrName,eventoId,limit=5, offset=0)=>{
                                         WHERE 
                                             e.isEliminado=0
                                             AND e.id = ?
-                                            AND ( u.id=?  OR  u.nombre LIKE ?) 
+                                            AND ( u.id=?  OR  u.nombre LIKE ?  OR u.email LIKE ?) 
                                             ;`,  
-                                            [participaciones,usuarios,eventos,eventoId,idOrName,`%${idOrName}%`])
+                                            [participaciones,usuarios,eventos,eventoId,idOrName,`%${idOrName}%`,`%${idOrName}%`])
         return {registros,total}
     }
     catch(error){

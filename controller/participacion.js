@@ -90,8 +90,8 @@ const isConfirmado=async(req,res)=>{
 
 const eliminarParticipacion=async(req,res)=>{
     try {
-        const {id}=req.params;
-        if(await Participacion.eliminarParticipacion(id)>0)
+        const {participacionId}=req.params;
+        if(await Participacion.eliminarParticipacion(participacionId)>0)
            return res.json("Participación eliminada")
         else return res.status(400).json("Usuario not found.")        
     } catch (error) {

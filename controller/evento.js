@@ -1,4 +1,4 @@
-const { isValid, parse } = require('date-fns');
+const { parseISO, isBefore, startOfDay } = require('date-fns');
 const Evento=require('../models/evento')
 
 
@@ -30,11 +30,10 @@ const crearEvento=async(req,res)=>{
         const {nombre,fecha,ubicacion,descripcion}=req.body;
          //validaciones
         //TODO:no se podría crear un evento con la misma fecha y ubicación
-        const fechaIngresada = new Date(fecha);    
-        const fechaActual = new Date();
-        fechaActual.setHours(0, 0, 0, 0);
+        const fechaIngresada = parseISO(fecha);    
+        const fechaActual =startOfDay(new Date());//la fecha con hr 0:0:0
         // no se puede crear un evento con una fecha anterior a la actual
-        if (fechaIngresada < fechaActual) {
+        if (isBefore(fechaIngresada, fechaActual) ){
             return res.status(400).json({ msg: 'La fecha del evento no puede ser menor a la actual' });
         }
 
@@ -67,11 +66,13 @@ const editarEvento=async(req,res)=>{
         const{id}=req.params;
         const{nombre,fecha,ubicacion,descripcion}=req.body;
         //VALIDACIÓN DE LA FECHA
-        const fechaIngresada = new Date(fecha);    
-        const fechaActual = new Date();
-        fechaActual.setHours(0, 0, 0, 0);
+        const fechaIngresada = parseISO(fecha);    
+        const fechaActual = startOfDay(new Date());//la fecha con hr 0:0:0
+
+        
         // no se puede crear un evento con una fecha anterior a la actual
-        if (fechaIngresada < fechaActual) {
+        
+        if (isBefore(fechaIngresada, fechaActual)) {
             return res.status(400).json( 'La fecha del evento no puede ser menor a la actual');
         }
 
