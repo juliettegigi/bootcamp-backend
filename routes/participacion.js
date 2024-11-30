@@ -15,6 +15,7 @@ router.put('/setPresenteToggle/:usuarioId/:eventoId',[
            setPresenteToggle)
            //todo  no se puede confirmar una participacion de otro usuario
 router.put('/setConfirmadoToggle/:participacionId',[
+            tieneRole('USUARIO'),
             check('participacionId').isInt().withMessage('participacionId debe ser un número entero'),
             validarCampos,
             isParticipacionDelUsuario,
@@ -29,17 +30,22 @@ router.get('/isConfirmado/:participacionId',[
            validarCampos,           
            ],isConfirmado)
 router.get('/pdf/:eventoId',[
+            tieneRole('USUARIO'),
             check('eventoId').isInt().withMessage('El eventoId debe ser un número entero'),
             validarCampos,
             isUserEventoEnParticipacion,
             ],generarPDF)
 router.delete('/:participacionId',[
+               tieneRole('USUARIO'),
                check('participacionId').isInt().withMessage('El id debe ser un número entero'),
                validarCampos,
                isParticipacionDelUsuario,
                noPresente
                ],eliminarParticipacion)
-router.post('/',createParticipacion)
+router.post('/',[
+                tieneRole('USUARIO'),
+            ],
+            createParticipacion)
 
 module.exports = router;
  

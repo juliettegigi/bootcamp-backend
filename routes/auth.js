@@ -10,7 +10,7 @@ router.post('/',
             [   check('email','El email es obligatorio').notEmpty(),
                 check('email','Email no  válido').isEmail(),
                 check('pass','La contraseña es obligatoria').notEmpty(),
-             //   check('pass','La contraseña debe tener al menos 6 caracteres').isLength({ min: 6 }),
+                check('pass','La contraseña debe tener al menos 6 caracteres').isLength({ min: 6 }),
                 validarCampos], 
             login);
 
@@ -18,5 +18,11 @@ router.post('/',
 router.delete('/',[
                isAuth
               ], logOut);
+              
+router.get('/isAuth',(req,res)=>{
+    if(!req.session.usuario)
+        return res.json(false)
+    else return res.json(true)
+})
 
 module.exports = router;

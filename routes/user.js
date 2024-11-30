@@ -7,12 +7,12 @@ const { validarCampos } = require('../middlewares/validar-campos');
 
 const router=Router();
 
-router.get('/cantidad',[isAuth],getCantidadUsuarios); // http://localhost:3000/users/cantidad
+router.get('/cantidad',[isAuth],getCantidadUsuarios); 
 router.get('/all/:eventoId',[isAuth],getUsuariosPorEvento); 
 router.get('/all2/:usuarioIdOrName/:eventoId',[isAuth],getUsuariosPorEvento2); 
-router.get('/all',[isAuth],getAllUsers); // http://localhost:3000/users/all
-router.get('/confirmados/:eventoId',[isAuth],getUsersConfirmados); // http://localhost:3000/users/confirmados
-router.get('/:id',[isAuth],leerUserById)// http://localhost:3000/users/8
+router.get('/all',[isAuth],getAllUsers); 
+router.get('/confirmados/:eventoId',[isAuth],getUsersConfirmados); 
+router.get('/:id',[isAuth],leerUserById)
 router.post('/', 
             [   isRolValido,
                 check('email','El email es obligatorio').notEmpty(),
@@ -24,8 +24,8 @@ router.post('/',
                 isUsuarioRegistrado,
             ], 
             crearUser); 
-router.put('/:id',[isAuth],actualizarUser); // http://localhost:3000/users/8
-router.delete('/:id',[isAuth],eliminarUser)// http://localhost:3000/users/8
+router.put('/:id',[isAuth],actualizarUser); 
+router.delete('/:id',[isAuth],eliminarUser)
 
 
 module.exports=router;

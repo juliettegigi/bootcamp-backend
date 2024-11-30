@@ -1,8 +1,10 @@
 const bcryptjs=require('bcryptjs');
+const {pool}=require("../db_config");
+
 const Usuario=require('../models/usuario')
 const UsuarioRol=require('../models/usuariorol')
-const Rol=require('../models/rol')
-//TODO: tengo q hacer las transacciones al crear a un usuario
+
+
 const getCantidadUsuarios=async(req,res)=>{
     
     try{
@@ -80,10 +82,14 @@ const getUsuariosPorEvento2=async(req,res)=>{
 const crearUser=async(req,res)=>{
     try {
         const {nombre,email,pass,rol="USUARIO",existeEmail=false,rolId=0,usuarioId:idUser}=req.body;
+        // Iniciar una transacción
+        const connection = await pool.getConnection();
+        await connection.beginTransaction();
 
          //si existe el email ==> tengo que agregar un registro en usuarioroles
+         // existe el email y le agrego un nuevo rol
          if(existeEmail){
-           const id= await UsuarioRol.create(idUser,rolId)
+           const id= await UsuarioRol.create(idUser,rolId,connection)
            return res.status(201).json(idUser)
          }
 
@@ -92,12 +98,13 @@ const crearUser=async(req,res)=>{
          const passCifrada=bcryptjs.hashSync(pass,salt);
          
          //crear usuario
-         const usuarioId=await Usuario.crearUser(nombre,email,passCifrada)
+         const usuarioId=await Usuario.crearUser(nombre,email,passCifrada,connection)
          // settearle el rol
-         await UsuarioRol.create(usuarioId,rolId)
+         await UsuarioRol.create(usuarioId,rolId,connection)
         return res.status(201).json(usuarioId)
     } catch (error) {
         console.log(error)
+        await connection.rollback();
         return res.status(500).json(error.message)
     }
 }

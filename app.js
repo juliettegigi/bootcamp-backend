@@ -31,15 +31,22 @@ app.use(cors({
 app.use(express.json())//para parsear el body JSON a un objeto JS accesible en req.body
 
 // ROUTES
-app.use("/usuarios",require('./routes/user'))
+app.use("/usuarios",
+         require('./routes/user'))
+
 app.use("/eventos"
-  ,[isAuth] 
-  ,require('./routes/evento'))
-app.use("/auth",require('./routes/auth'))
+        ,[isAuth] 
+        ,require('./routes/evento'))
+
+app.use("/auth",
+        require('./routes/auth'))
+
 app.use("/participaciones",
         [isAuth],
         require('./routes/participacion'))
-app.use("/roles",require('./routes/rol'))
+
+app.use("/roles",
+       require('./routes/rol'))
 
 
 

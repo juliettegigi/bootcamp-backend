@@ -11,13 +11,14 @@ const{usuarios,participaciones,eventos}=tablas;
  * @param {string} pass 
  * @returns {Promise<number|Error>} return id del user creado
  */
-const crearUser=async(nombre,email,pass)=>{
+const crearUser=async(nombre,email,pass,connection=null)=>{
     try {
        const[result]= await pool.query(`Insert into ??(nombre,email,pass)
                           values(?,?,?);`,
                         [usuarios,nombre,email,pass]);
-        console.log(`--------------------- result de INSERT INTO usuarios(nombre,email,pass) VALUES(${nombre},${email},${pass});`)
-        console.log(result)
+       
+        if(connection)
+            await connection.commit();
         return result.insertId;                
     } catch (error) {
         console.log(error);
@@ -43,8 +44,7 @@ const actualizarUser=async(id,nombre,email,pass)=>{
                           set nombre=? , email=?, pass=?
                           where id=?;`,
                         [usuarios,nombre,email,pass,id]);
-        console.log(`--------------------- result de UPDATE usuarios set nombre=${nombre}, email=${email}, pass=${pass} WHERE id=${id}`)
-        console.log(result)
+       
         return result.affectedRows;
 
      } catch (error) {
@@ -63,8 +63,7 @@ const eliminarUser=async(id)=>{
         const [result]=await pool.query(`delete from ?? 
                                          where id=?`,
                                         [usuarios,id]);
-        console.log(`--------------------- result de DELETE FROM usuarios WHERE id=${id}`)
-        console.log(result)
+       
         return result.affectedRows;
     } catch (error) {
         console.log(error);
@@ -83,8 +82,7 @@ const getAllUsers=async()=>{
         //2) un objeto
         const [users]=await pool.query(`Select *
                                            FROM ??;`,[usuarios]);
-        console.log("--------------------- result de Select * from usuarios;")
-        console.log(users)
+       
         return users;
     } catch(error){
         console.log(error);
@@ -101,8 +99,7 @@ const getCantidadUsuarios=async()=>{
     try {
         const [result]=await pool.query(`Select count(*) as total
                           from ??;`,[usuarios])
-        console.log("--------------------- result de select count(*) as total from usuarios")
-        console.log(result)
+        
         return result[0].total
     } catch (error) {
         console.log(error)
@@ -121,8 +118,7 @@ const getUserByEmail=async(email)=>{
                                          FROM ??
                                          WHERE email=?;`,
                                          [usuarios,email])
-        console.log(`--------------------- result de select * from ${usuarios} where email=${email} `)
-        console.log(result)
+        
         return result[0];
 
     }catch(error){

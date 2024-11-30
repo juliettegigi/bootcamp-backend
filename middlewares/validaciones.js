@@ -7,9 +7,6 @@ const tieneRole=(...roles)=>{
   
     return (req,res,next)=>{
         const rols = req.session.roles;
-        console.log('------------------------------------------------');
-        console.log(roles);
-        console.log(rols);
         if(!roles.some(rol =>rols.some(objeto => objeto.rol === rol)))
           return res.status(403).json({msg:`El usuario no tiene el rol ${roles} necesario para acceder a la petición.`})
         next(); 
@@ -74,10 +71,10 @@ const isUserEventoEnParticipacion=async(req,res,next)=>{
 
 const isParticipacionDelUsuario=async(req,res,next)=>{
   try{
-    const {participacionId}=req.params 
-    const participacion=await Participacion.getParticipacionById(parseInt(participacionId));
+    req.params.participacionId= parseInt(req.params.participacionId)
+    let{participacionId}=req.params 
+    const participacion=await Participacion.getParticipacionById(participacionId);
     if(participacion.length===0){
-      console.log("entrooooooooooo")
         return res.status(400).json('participación not found')
     }
     if(participacion[0].usuarioId!==req.session.usuario.id){
@@ -91,8 +88,8 @@ const isParticipacionDelUsuario=async(req,res,next)=>{
 
 const noPresente=async(req,res,next)=>{
   try{
-    const {id}=req.params 
-    if(await Participacion.isPresente(id)){
+    const {participacionId}=req.params 
+    if(await Participacion.isPresente(participacionId)){
         return res.status(400).json('No se puede eliminar una participación que se presenció')
     }
     next();

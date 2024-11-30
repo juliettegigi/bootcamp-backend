@@ -1,13 +1,12 @@
-const { parseISO, isBefore, startOfDay } = require('date-fns');
+const { parseISO, isBefore, startOfDay, isValid } = require('date-fns');
 const Evento=require('../models/evento')
 
 
 const getEventosPag=async(req,res)=>{
     try {
-        // en url voy a recibir tipo "localhost:8083/api/eventos?limit=2&desde=4"
+      
         const {limit=5,offset=0}=req.query;
         const{registros,total}=await Evento.getEventosPag(parseInt(limit),parseInt(offset));
-        //let eventos=await Evento.getEventosPag(limit,offset);
         return res.status(200).json({registros,total})        
     } catch (error) {
         console.log(error)
@@ -66,7 +65,11 @@ const editarEvento=async(req,res)=>{
         const{id}=req.params;
         const{nombre,fecha,ubicacion,descripcion}=req.body;
         //VALIDACIÓN DE LA FECHA
-        const fechaIngresada = parseISO(fecha);    
+        const fechaIngresada = parseISO(fecha);
+        if (!isValid(fechaIngresada)) {
+            return res.status(400).json('La fecha ingresada no es válida.');
+          }
+        
         const fechaActual = startOfDay(new Date());//la fecha con hr 0:0:0
 
         

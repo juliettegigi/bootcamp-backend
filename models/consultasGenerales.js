@@ -40,7 +40,7 @@ const is=async(condicion,arreglo)=>{
                                             ;`, 
                                             arreglo
                                         );
-        console.log(resultado)
+        
        
           return (resultado.length===0)?0:resultado[0].id;
     } catch (error) {

@@ -31,7 +31,7 @@ const getEventosPag=async(limit,offset)=>{
         const totalQuery = `SELECT COUNT(*) as total
                                         FROM ??
                                         WHERE isEliminado=0`;
-       console.log("TOTAL QUERY  ",totalQuery)
+      
        const [[{ total }]] = await pool.query(totalQuery, [eventos]);
         return {registros,total};                
     } catch (error) {
@@ -66,8 +66,7 @@ const crearEvento=async(nombre,fecha,ubicacion,descripcion)=>{
        const[result]= await pool.query(`Insert into ??(nombre,fecha,ubicacion,descripcion)
                           values(?,?,?,?);`,
                         [eventos,nombre,fecha,ubicacion,descripcion]);
-        console.log(`--------------------- result de INSERT INTO eventos`)
-        console.log(result)
+        
         return result.insertId;                
     } catch (error) {
         console.log(error);
@@ -83,8 +82,7 @@ const borrarEventoLogico=async(id)=>{
                                         SET isEliminado=1
                                         WHERE id=?;`,
                         [eventos,id]);
-        console.log(`--------------------- result de borrarEventoLogico`)
-        console.log(result)
+        
         return result.affectedRows;                
     } catch (error) {
         console.log(error);
@@ -98,8 +96,7 @@ const editarEvento=async(id,nombre,fecha,ubicacion,descripcion)=>{
                          set  nombre=?,fecha=?,ubicacion=?,descripcion=?
                          where id=?;`,
                        [eventos,nombre,fecha,ubicacion,descripcion,id]);
-       console.log(`--------------------- result de UPDATE eventos `)
-       console.log(result)
+       
        return result.affectedRows;
 
     } catch (error) {
@@ -122,7 +119,7 @@ const getEventoByIdOrName = async (idOrName,limit=1,offset=0) => {
        const totalQuery = `SELECT COUNT(*) as total  
                            FROM ?? 
                            WHERE isEliminado=0 AND (id = ? OR nombre LIKE ?)`;
-       console.log("TOTAL QUERY  ",totalQuery)
+       
        const [[{ total }]] = await pool.query(totalQuery, [eventos,idOrName,`%${idOrName}%`]);
        
        //todos los registros paginados
@@ -131,8 +128,6 @@ const getEventoByIdOrName = async (idOrName,limit=1,offset=0) => {
                limit ? 
                offset ?;`
       const [registros] = await pool.query(query, [eventos,idOrName,`%${idOrName}%`,limit,offset]);
-      console.log(`--------------------- eventos of getEventoByIdOrName`);
-      console.log(registros,total);
   
       return {registros,total};
     } catch (error) {
@@ -163,7 +158,7 @@ const getEventoByIdOrName = async (idOrName,limit=1,offset=0) => {
                     `;
       const [[{ total }]] = await pool.query(query, [eventos]);
 
-      console.log(registros,total);
+   
   
       return {registros,total};
     } catch (error) {
@@ -178,7 +173,7 @@ const getEventoByIdOrName = async (idOrName,limit=1,offset=0) => {
                  FROM participaciones p
                  INNER JOIN usuarios u ON u.id=p.usuarioId
                  INNER JOIN eventos e ON e.id=p.eventoId
-                 WHERE isPresente=1 AND usuarioId=?
+                 WHERE isPresente=1 AND usuarioId=? AND isEliminado=0
                  ORDER BY fecha ASC 
                  LIMIT ? 
                  OFFSET ?;
@@ -189,11 +184,11 @@ const getEventoByIdOrName = async (idOrName,limit=1,offset=0) => {
                FROM participaciones p
                INNER JOIN usuarios u ON u.id=p.usuarioId
                INNER JOIN eventos e ON e.id=p.eventoId
-               WHERE isPresente=1 AND usuarioId=?
+               WHERE isPresente=1 AND usuarioId=? AND isEliminado=0
                       `;
         const [[{ total }]] = await pool.query(query, [usuarioId]);
   
-        console.log(registros,total);
+       
     
         return {registros,total};
      

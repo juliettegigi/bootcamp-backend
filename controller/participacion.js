@@ -11,10 +11,11 @@ const setPresenteToggle=async(req,res)=>{
     try {
        
         const {usuarioId,eventoId}=req.params;
-        const evento=await Evento.getEventoById(eventoId);
+        const evento=(await Evento.getEventoById(eventoId))[0];
 
         const fechaActual = new Date();
         const fechaEvento = new Date(evento.fecha);
+        
         
         if (!isSameDay(fechaActual, fechaEvento)) {
             return res.status(400).json("no se puede poner presente a un evento no actual.") 
@@ -126,12 +127,16 @@ const generarPDF=async(req,res)=>{
  
    
 
-  console.log(__dirname)
-  console.log(path.join(__dirname,'/fonts/Roboto-Regular.ttf'))
+ 
   try  { 
     
-    const evento=await Evento.getEventoById(req.params.eventoId)
+    const evento=(await Evento.getEventoById(req.params.eventoId))[0]
     const today = new Date();
+    const fechaDelEvento=new Date(evento.fecha).toLocaleDateString('es-ES',{
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric',
+      })
     const formattedDate = today.toLocaleDateString('es-ES', {
       day: '2-digit',
       month: 'long',
@@ -155,7 +160,7 @@ const docDefinition = {
       { text: 'CERTIFICADO DE PARTICIPACIÓN', style: 'header', alignment: 'center', margin: [0, 40, 0, 20] },
       { text: evento.nombre, style: 'subheader', alignment: 'center', margin: [0, 0, 0, 10] },
       {
-        text: `Se otorga el presente certificado a: ${req.session.usuario.nombre}, por su participación en el evento realizado el día ${new Date(evento.fecha).toLocaleDateString('es-ES')} en ${evento.ubicacion}.`,
+        text: `Se otorga el presente certificado a: ${req.session.usuario.nombre}, por su participación en el evento realizado el día ${fechaDelEvento} en ${evento.ubicacion}.`,
         margin: [0, 10, 0, 20],
       },
       {
@@ -175,7 +180,6 @@ const docDefinition = {
       },
   };
     var pdfDoc = pdfMake.createPdfKitDocument(docDefinition,{});
-   // pdfDoc.pipe(fs.createWriteStream(__dirname+'/basics.pdf'));
    res.setHeader('Content-Disposition', 'attachment; filename="basics.pdf"');
    res.setHeader('Content-Type', 'application/pdf');
    pdfDoc.pipe(res);

@@ -6,13 +6,13 @@ const{usuarioRoles}=tablas;
  * @param {number} id 
  * @returns {Promise<Object>|Error} Rol encontrado  o {}
  */
-const create=async(usuarioId,rolId)=>{
+const create=async(usuarioId,rolId,connection=null)=>{
     try{
         const [result]=await pool.query(`Insert into ??(usuarioId,rolId)
                                          values(?,?);`,
                                          [usuarioRoles,usuarioId,rolId]);
-        console.log(`--------------------- result de create usuarioRol `)
-        console.log(result)
+       
+        await connection.commit();
         return result.insertId;  
     }catch(error){
         console.log(error)
